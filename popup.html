@@ -4,9 +4,31 @@
   <style>
     body {
       width: 300px;
-      padding: 10px;
+      padding: 20px;
       font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      background-color: #fff8e1;
+      border-radius: 8px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    h2 {
+      color: #ff9800;
+      margin: 0;
+      font-size: 24px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .description {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.4;
+      text-align: center;
+      margin: 10px 0 20px;
+      padding: 0 15px;
     }
     
     #smiley-container {
@@ -14,6 +36,10 @@
       margin: 20px 0;
       height: 100px;
       position: relative;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
     #smiley {
@@ -27,30 +53,50 @@
     #take-screenshot {
       display: block;
       margin: 0 auto;
-      padding: 10px 20px;
-      background-color: #4285f4;
+      padding: 12px 24px;
+      background-color: #ff9800;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 25px;
       cursor: pointer;
       font-size: 14px;
-      transition: background-color 0.2s;
+      font-weight: bold;
+      transition: all 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
     #take-screenshot:hover {
-      background-color: #3367d6;
+      background-color: #f57c00;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    #take-screenshot:active {
+      transform: translateY(1px);
     }
     
     #status {
       text-align: center;
-      margin-top: 10px;
-      font-size: 12px;
+      margin-top: 15px;
+      font-size: 13px;
       color: #666;
+      min-height: 20px;
+      padding: 5px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    
+    .status-active {
+      background-color: rgba(255, 152, 0, 0.1);
+      color: #f57c00 !important;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align: center; color: #333;">SmileyAI</h2>
+  <div class="header">
+    <h2>SmileyAI</h2>
+    <p class="description">Your friendly AI assistant that captures and analyzes your screen with a smile! 😊</p>
+  </div>
   
   <div id="smiley-container">
     <svg id="smiley" width="80" height="80" viewBox="0 0 100 100">

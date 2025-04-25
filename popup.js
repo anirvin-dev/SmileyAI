@@ -9,44 +9,48 @@ document.addEventListener('DOMContentLoaded', function() {
   let isBlinking = false;
   let isHungry = false;
   
+  function updateStatus(message, isActive = false) {
+    status.textContent = message;
+    status.className = isActive ? 'status-active' : '';
+  }
+  
   // Take screenshot button click handler
-  takeScreenshotButton.addEventListener('click', function() {
+  takeScreenshotButton.addEventListener('click', async function() {
     if (isBlinking) return; // Prevent multiple clicks during animation
     
     // Blink animation
-    blinkEyes().then(() => {
+    await blinkEyes();
+    
+    try {
       // Take the screenshot
-      chrome.tabs.captureVisibleTab(null, {format: 'png'}, function(dataUrl) {
-        if (chrome.runtime.lastError) {
-          status.textContent = 'Error: ' + chrome.runtime.lastError.message;
-          return;
-        }
-        
-        // Store the screenshot
-        chrome.storage.local.set({latestScreenshot: dataUrl}, function() {
-          status.textContent = 'Screenshot taken! Analyzing...';
+      const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+      const dataUrl = await chrome.tabs.captureVisibleTab(null, {format: 'png'});
+      
+      updateStatus('Screenshot taken! Analyzing...', true);
+      
+      // Store the screenshot
+      await chrome.storage.local.set({latestScreenshot: dataUrl});
+      
+      // Send to background script for processing
+      chrome.runtime.sendMessage({
+        action: "analyzeScreenshot",
+        screenshot: dataUrl
+      }, function(response) {
+        if (response && response.success) {
+          updateStatus('Analysis complete!', true);
           
-          // Send to background script for processing
-          chrome.runtime.sendMessage({
-            action: "analyzeScreenshot",
-            screenshot: dataUrl
-          }, function(response) {
-            if (response && response.success) {
-              status.textContent = 'Analysis complete!';
-              // Show toast notification with results
-              chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                  action: "showToast",
-                  message: response.analysis
-                });
-              });
-            } else {
-              status.textContent = 'Analysis failed. Please try again.';
-            }
+          // Show toast notification with results
+          chrome.tabs.sendMessage(tab.id, {
+            action: "showToast",
+            message: response.analysis
           });
-        });
+        } else {
+          updateStatus('Analysis failed. Please try again.');
+        }
       });
-    });
+    } catch (error) {
+      updateStatus('Error: ' + error.message);
+    }
   });
   
   // Blink animation function
@@ -82,14 +86,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!isBlinking && Math.random() < 0.1) { // 10% chance for random interaction
       const interactions = [
         () => {
-          status.textContent = "I'm feeling hungry...";
+          updateStatus("I'm feeling hungry...");
           isHungry = true;
         },
         () => {
-          status.textContent = "What are you working on?";
+          updateStatus("What are you working on?");
         },
         () => {
-          status.textContent = "Need help with anything?";
+          updateStatus("Need help with anything?");
         }
       ];
       
@@ -98,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Clear status after 3 seconds
       setTimeout(() => {
-        status.textContent = '';
+        updateStatus('');
       }, 3000);
     }
   }, 10000); // Check every 10 seconds
