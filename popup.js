@@ -4,6 +4,36 @@ document.addEventListener('DOMContentLoaded', function() {
   const eyes = document.querySelectorAll('#left-eye, #right-eye');
   const closedEyes = document.getElementById('closed-eyes');
   const status = document.getElementById('status');
+  const toast = document.getElementById('toast');
+  const apiKeyInput = document.getElementById('api-key-input');
+  const saveApiKeyButton = document.getElementById('save-api-key');
+  
+  // Check if API key exists in storage
+  chrome.storage.local.get(['openaiApiKey'], function(result) {
+    if (!result.openaiApiKey) {
+      // Show toast if no API key is found
+      toast.style.display = 'block';
+    }
+  });
+  
+  // Save API key button click handler
+  saveApiKeyButton.addEventListener('click', function() {
+    const apiKey = apiKeyInput.value.trim();
+    if (apiKey) {
+      chrome.storage.local.set({openaiApiKey: apiKey}, function() {
+        toast.style.display = 'none';
+        status.textContent = 'API key saved successfully!';
+        setTimeout(() => {
+          status.textContent = '';
+        }, 3000);
+      });
+    } else {
+      status.textContent = 'Please enter a valid API key';
+      setTimeout(() => {
+        status.textContent = '';
+      }, 3000);
+    }
+  });
   
   // Initialize smiley state
   let isBlinking = false;

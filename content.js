@@ -83,3 +83,42 @@ function showToast(message) {
     }, 300);
   }, 5000);
 }
+
+takeScreenshotButton.addEventListener('click', function() {
+  if (isBlinking) return; // Prevent multiple clicks during animation
+  
+  // Blink animation
+  blinkEyes().then(() => {
+    // Take the screenshot
+    chrome.tabs.captureVisibleTab(null, {format: 'png'}, function(dataUrl) {
+      if (chrome.runtime.lastError) {
+        status.textContent = 'Error: ' + chrome.runtime.lastError.message;
+        return;
+      }
+      
+      // Store the screenshot
+      chrome.storage.local.set({latestScreenshot: dataUrl}, function() {
+        status.textContent = 'Screenshot taken! Analyzing...';
+        
+        // Send to background script for processing
+        chrome.runtime.sendMessage({
+          action: "analyzeScreenshot",
+          screenshot: dataUrl
+        }, function(response) {
+          if (response && response.success) {
+            status.textContent = 'Analysis complete!';
+            // Show toast notification with results
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+              chrome.tabs.sendMessage(tabs[0].id, {
+                action: "showToast",
+                message: response.analysis
+              });
+            });
+          } else {
+            status.textContent = 'Analysis failed. Please try again.';
+          }
+        });
+      });
+    });
+  });
+});
