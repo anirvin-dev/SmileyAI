@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    
+    #smiley-container {
+      text-align: center;
+      margin: 20px 0;
+      height: 100px;
+      position: relative;
+    }
+    
+    #smiley {
+      transition: transform 0.2s;
+    }
+    
+    #smiley:hover {
+      transform: scale(1.1);
+    }
+    
+    #take-screenshot {
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    
+    #take-screenshot:hover {
+      background-color: #3367d6;
+    }
+    
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center; color: #333;">SmileyAI</h2>
+  
+  <div id="smiley-container">
+    <svg id="smiley" width="80" height="80" viewBox="0 0 100 100">
+      <!-- Face circle -->
+      <circle cx="50" cy="50" r="45" fill="#FFDE00" stroke="#FF9800" stroke-width="2" />
+      
+      <!-- Left eye -->
+      <g id="left-eye">
+        <circle cx="35" cy="40" r="6" fill="#000" />
+      </g>
+      
+      <!-- Right eye -->
+      <g id="right-eye">
+        <circle cx="65" cy="40" r="6" fill="#000" />
+      </g>
+      
+      <!-- Closed eyes (initially hidden) -->
+      <g id="closed-eyes" style="opacity: 0;">
+        <path d="M25 40 Q35 33 45 40" fill="none" stroke="#000" stroke-width="3" />
+        <path d="M55 40 Q65 33 75 40" fill="none" stroke="#000" stroke-width="3" />
+      </g>
+      
+      <!-- Smile -->
+      <path d="M30 65 Q50 80 70 65" fill="none" stroke="#000" stroke-width="3" />
+    </svg>
+  </div>
+  
+  <button id="take-screenshot">Take Screenshot</button>
+  <div id="status"></div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
