@@ -35,7 +35,7 @@ async function analyzeScreenshotWithAI(screenshotDataUrl) {
       const aiApiUrl = 'https://api.your-ai-service.com/analyze'; 
       
       // Set your API key in the headers (replace with your actual API key)
-      const apiKey = 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;
+      const apiKey = 'put the api key here';
       
       // Make the API request
       const aiResponse = await fetch(aiApiUrl, {

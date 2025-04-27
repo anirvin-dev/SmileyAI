@@ -159,18 +159,47 @@ document.addEventListener('DOMContentLoaded', function() {
       // Store the screenshot in chrome.storage
       await chrome.storage.local.set({latestScreenshot: dataUrl});
       
-      // Show success toast with the screenshot
+      // Show processing toast
       showToast({
-        title: 'Screenshot Captured',
-        message: 'Your screenshot has been successfully captured.',
-        type: 'success',
-        duration: 0, // Don't auto-dismiss
-        image: dataUrl
+        title: 'Processing...',
+        message: 'Analyzing your screen with AI...',
+        type: 'info',
+        duration: 0, // Don't auto-dismiss while processing
       });
       
-      // Reset the UI
-      updateStatus('Screenshot captured!', true);
-      resetSmiley();
+      // Send screenshot for AI analysis
+      chrome.runtime.sendMessage(
+        {
+          action: "analyzeScreenshot",
+          screenshot: dataUrl
+        },
+        async function(response) {
+          // Hide processing toast
+          const toasts = document.querySelectorAll('.toast');
+          toasts.forEach(toast => hideToast(toast));
+          
+          if (response && response.success) {
+            // Send the analysis to the content script to display
+            const [activeTab] = await chrome.tabs.query({active: true, currentWindow: true});
+            chrome.tabs.sendMessage(activeTab.id, {
+              action: "showToast",
+              message: response.analysis
+            });
+            
+            updateStatus('Analysis complete!', true);
+          } else {
+            showToast({
+              title: 'Analysis Failed',
+              message: response?.error || 'Failed to analyze screenshot',
+              type: 'error',
+              duration: 5000
+            });
+            updateStatus('Analysis failed.', false);
+          }
+          
+          resetSmiley();
+        }
+      );
       
     } catch (error) {
       updateStatus('Error: ' + error.message);
