@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Screenshot Task AI Settings</title>
+    <style>
+        body { font-family: sans-serif; padding: 10px; width: 300px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="password"] { width: 95%; margin-bottom: 10px; padding: 5px; }
+        button { padding: 8px 15px; cursor: pointer; }
+        #status { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>OpenAI API Key</h2>
+    <p>Enter your OpenAI API key (GPT-4 Vision / GPT-4o recommended). It will be stored securely in Chrome sync storage.</p>
+    <label for="apiKey">API Key:</label>
+    <input type="password" id="apiKey">
+    <button id="saveButton">Save Key</button>
+    <div id="status"></div>
+
+    <script src="./dist/options.js"></script>
+</body>
+</html>

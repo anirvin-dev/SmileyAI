@@ -1,34 +1,44 @@
 {
   "manifest_version": 3,
-  "name": "SmileyAI",
-  "version": "1.0",
-  "description": "AI-powered screen analysis with an interactive smiley face",
+  "name": "Smiley AI", 
+  "version": "1.1.0",
+  "description": "Takes screenshot (Cmd/Ctrl+Shift+O), sends to OpenAI to answer tasks or summarize.",
   "permissions": [
     "activeTab",
-    "scripting",
+    "tabs",
     "storage",
-    "tabs"
+    "notifications"
+    
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "images/icon16.png",
-      "48": "images/icon48.png",
-      "128": "images/icon128.png"
-    }
-  },
+  "host_permissions": [
+    "https://api.openai.com/*" 
+  ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "dist/background.js",
+    "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+  "commands": {
+    "take_screenshot_analyze": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O",
+        "mac": "Command+Shift+O"
+      },
+      "description": "Take Screenshot and Ask AI to Perform Task or Summarize"
     }
-  ],
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Screenshot Task AI Settings",
+    "default_popup": "popup.html"
+  },
   "icons": {
-    "16": "images/icon16.png",
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }
