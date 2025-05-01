@@ -136,3 +136,22 @@ chrome.runtime.onInstalled.addListener(details => {
         console.log("Extension updated to version:", chrome.runtime.getManifest().version);
     }
 });
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  if (message.action === "analyzeScreenshot") {
+    try {
+      const apiKey = await getApiKey();
+      if (!apiKey) {
+        sendResponse({ success: false, error: "API key not found. Please set your OpenAI API key in the extension options." });
+        return;
+      }
+
+      const analysisResult = await analyzeScreenshot(apiKey, message.screenshot);
+      sendResponse({ success: true, analysis: analysisResult });
+    } catch (error: any) {
+      console.error("Error analyzing screenshot:", error);
+      sendResponse({ success: false, error: error.message || "Failed to analyze screenshot" });
+    }
+    return true; // Keep the message channel open for async response
+  }
+});
