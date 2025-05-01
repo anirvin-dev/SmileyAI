@@ -140,18 +140,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error('No active tab found');
             }
             const dataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: 'png' });
-            // Show processing toast
+            // Show screenshot toast
             showToast({
-                title: 'Processing...',
+                title: 'Screenshot Captured',
                 message: 'Analyzing your screen with AI...',
                 type: 'info',
-                duration: 0, // Don't auto-dismiss while processing
+                duration: 0,
+                image: dataUrl
             });
             // Send screenshot for AI analysis
             chrome.runtime.sendMessage({
                 action: "analyzeScreenshot",
                 screenshot: dataUrl
             }, async function (response) {
+                console.log('Analysis response:', response); // Debug log
                 // Hide processing toast
                 const toasts = document.querySelectorAll('.toast');
                 toasts.forEach(toast => hideToast(toast));
@@ -161,16 +163,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         title: 'Analysis Complete',
                         message: response.analysis,
                         type: 'success',
-                        duration: 10000
+                        duration: 10000,
+                        image: dataUrl
                     });
                     updateStatus('Analysis complete!', true);
                 }
                 else {
+                    console.error('Analysis failed:', response?.error); // Debug log
                     showToast({
                         title: 'Analysis Failed',
                         message: response?.error || 'Failed to analyze screenshot',
                         type: 'error',
-                        duration: 5000
+                        duration: 5000,
+                        image: dataUrl
                     });
                     updateStatus('Analysis failed.', false);
                 }
@@ -178,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
         catch (error) {
+            console.error('Screenshot error:', error); // Debug log
             updateStatus('Error: ' + error.message);
             showToast({
                 title: 'Error',

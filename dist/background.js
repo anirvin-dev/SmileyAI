@@ -127,20 +127,28 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.action === "analyzeScreenshot") {
+        console.log("Received screenshot analysis request");
         try {
             const apiKey = await getApiKey();
+            console.log("API key status:", apiKey ? "Found" : "Not found");
             if (!apiKey) {
+                console.error("API key not found in storage");
                 sendResponse({ success: false, error: "API key not found. Please set your OpenAI API key in the extension options." });
                 return;
             }
+            console.log("Starting screenshot analysis...");
             const analysisResult = await analyzeScreenshot(apiKey, message.screenshot);
+            console.log("Analysis completed successfully");
             sendResponse({ success: true, analysis: analysisResult });
         }
         catch (error) {
-            console.error("Error analyzing screenshot:", error);
-            sendResponse({ success: false, error: error.message || "Failed to analyze screenshot" });
+            console.error("Error in analyzeScreenshot handler:", error);
+            sendResponse({
+                success: false,
+                error: error.message || "Failed to analyze screenshot. Please check your API key and try again."
+            });
         }
-        return true; // Keep the message channel open for async response
+        return true;
     }
 });
 //# sourceMappingURL=background.js.map
