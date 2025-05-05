@@ -1,5 +1,5 @@
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
-const MODEL = "gpt-4o"; 
+const MODEL = "gpt-4-vision-preview"; 
 
 function showNotification(title: string, message: string, isError: boolean = false) {
     const notificationId = `screenshot-ai-${Date.now()}`;
